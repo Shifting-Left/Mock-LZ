@@ -1,0 +1,42 @@
+{
+  "name": "Custom Azure & Terraform Environment",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "18"
+    }
+  },
+  "remoteEnv": {
+    // Ensure to add the TF_API_TOKEN secret in your codespaces github setings (under secrets)!
+    "TF_API_TOKEN": "${secrets.TF_API_TOKEN}"
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash",
+        "git.autofetch": true,
+        "git.autofetchPeriod": 180,
+        "git.pruneOnFetch": true
+      },
+      "extensions": [
+        "ms-vscode.azurecli",
+        "ms-azuretools.vscode-azurefunctions",
+        "hashicorp.terraform",
+        "github.copilot",
+        "github.copilot-chat",
+        "bridgecrew.checkov",
+        "github.gitleaks",
+        "torutsumi.opa",
+        "GitHub.vscode-github-actions",
+        "ms-windows-ai.ai-toolkit",
+        "ms-azuretools.azure-ai-foundry-vscode",
+        "ms-azuretools.vscode-docker"
+      ]
+    }
+  },
+  "postCreateCommand": "npm install -g pnpm azure-functions-core-tools@4 && pip3 install --user checkov && mkdir -p ~/.terraform.d && printf '{\n  \"credentials\": {\n    \"app.terraform.io\": {\n      \"token\": \"%s\"\n    }\n  }\n}' \"$TF_API_TOKEN\" > ~/.terraform.d/credentials.tfrc.json",
+  "remoteUser": "vscode"
+}
+
