@@ -10,7 +10,7 @@ jobs:
     runs-on: self-hosted
 
     env:
-      TF_TOKEN_app_terraform_io: ${{ secrets.TF_TOKEN_API1 }}
+      TF_TOKEN_app_terraform_io: "${{ secrets.TF_TOKEN_API1 }}"
 
     steps:
     # ... (previous steps for checkout, node, terraform are correct) ...
