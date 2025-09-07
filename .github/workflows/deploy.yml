@@ -1,4 +1,4 @@
-name: Deploy with Terraform and Ansible
+name: Deploy Terraform (apply)
 
 on:
   push:
@@ -8,35 +8,25 @@ on:
 jobs:
   deploy:
     runs-on: self-hosted
-
     env:
-      TF_TOKEN_app_terraform_io: "${{ secrets.TF_TOKEN_API1 }}"
+      TF_TOKEN_app_terraform_io: ${{ secrets.TF_TOKEN_API1 }}
 
     steps:
-    # ... (previous steps for checkout, node, terraform are correct) ...
-    - name: Checkout Repo
-      uses: actions/checkout@v3
+      - name: Checkout Repo
+        uses: actions/checkout@v3
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
 
-    - name: Set up Terraform
-      uses: hashicorp/setup-terraform@v2
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+      - name: Terraform Init
+        working-directory: Landing-Zone
+        run: terraform init
 
-    # - name: Configure Terraform Cloud Credentials
-    #   run: |
-    #     cat <<-EOF > ~/.terraformrc
-    #     credentials "app.terraform.io" {
-    #       token = "${{ secrets.TF_API_TOKEN }}"
-    #     }
-    #     EOF
+      - name: Terraform Apply
+        working-directory: Landing-Zone
+        run: terraform apply -auto-approve
 
-    - name: Terraform Init
-      working-directory: Landing-Zone
-      run: terraform init
-
-    - name: Terraform Apply
-      working-directory: Landing-Zone
-      run: terraform apply -auto-approve
