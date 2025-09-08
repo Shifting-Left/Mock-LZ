@@ -84,7 +84,7 @@ resource "azurerm_key_vault" "keyvault" {
     sku_name                    = "standard"
     purge_protection_enabled    = true
     rbac_authorization_enabled = true
-    public_network_access_enabled = false # Public networking is disabled. As such the browser hits the public endpoint and is blocked (data plane access). Access is only possible via the private endpoint.
+    public_network_access_enabled = true # To disable, set to false and use private endpoint (via VPN  gateway). It looks like public endpoint is entirely off. Although terraform is connecting from Home IP, it is still blocked prior to the FW rule.
 
     network_acls {
         default_action = "Deny"
