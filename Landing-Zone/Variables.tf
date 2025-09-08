@@ -37,3 +37,7 @@ variable "Home_PIP" {
     description = "Home Public IP address for access"
   
 }
+variable "user1_object_id" {
+    description = "Object ID of the my personal user"
+  
+}

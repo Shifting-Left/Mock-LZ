@@ -6,7 +6,8 @@ terraform {
     workspaces { 
       name = "Mock-LZ" 
     } 
-  } 
+  }
+  
 }
 
 provider "azurerm" {
@@ -16,4 +17,6 @@ provider "azurerm" {
     }
     }
     storage_use_azuread = true
+    
+    
 }
