@@ -107,6 +107,7 @@ resource "azurerm_storage_account_customer_managed_key" "example" {
   storage_account_id = azurerm_storage_account.strg.id
   key_vault_id       = azurerm_key_vault.keyvault.id
   key_name           = azurerm_key_vault_key.key.name
+  depends_on = [azurerm_role_assignment.storage_keyvault_role]
 }
 
 resource "azurerm_private_endpoint" "storage_pe" {
