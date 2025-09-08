@@ -50,7 +50,7 @@ resource "azurerm_subnet" "subnet" {
 }
 
 resource "azurerm_storage_account" "strg" {
-  name                = "storage-${azurerm_resource_group.rg.name}-${random_string.suffix.result}"
+  name                = "storage${azurerm_resource_group.rg.name}${random_string.suffix.result}"
   resource_group_name = azurerm_resource_group.rg.name
 
   location                 = azurerm_resource_group.rg.location

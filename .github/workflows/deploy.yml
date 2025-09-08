@@ -30,3 +30,16 @@ jobs:
         working-directory: Landing-Zone
         run: terraform apply -auto-approve
 
+
+      - name: Cleanup secrets (best-effort)
+        if: always()
+        shell: bash
+        run: |
+          # Overwrite for subsequent steps in this job
+          echo "TF_TOKEN_app_terraform_io=" >> "$GITHUB_ENV"
+          unset TF_TOKEN_app_terraform_io || true
+          # Remove any TF CLI creds file if a previous action created one
+          rm -f "$HOME/.terraformrc" "$HOME/.terraform.d/credentials.tfrc.json" || true
+          # Clean local TF artifacts from workspace
+          rm -rf "${GITHUB_WORKSPACE}/Landing-Zone/.terraform" \
+                 "${GITHUB_WORKSPACE}/Landing-Zone/.terraform.lock.hcl" || true

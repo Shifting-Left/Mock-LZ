@@ -1,6 +1,6 @@
 variable "resource_group_name" {
     description = "Name of the resource group"
-    default     = "example-rg"
+    default     = "hastings"
 }
 
 variable "location" {
@@ -16,16 +16,6 @@ variable "vnet_name" {
 variable "subnet_name" {
     description = "Name of the subnet"
     default     = "example-subnet"
-}
-
-variable "storage_account_name" {
-    description = "Name of the storage account"
-    default     = "tevinfexampleacct"
-}
-
-variable "key_vault_name" {
-    description = "Name of the key vault"
-    default     = "tevinf-keyvault1"
 }
 
 variable "private_endpoint_name" {
