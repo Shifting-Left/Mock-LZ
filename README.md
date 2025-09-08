@@ -21,7 +21,7 @@ This configuration provisions the following core components:
     * A system-assigned managed identity.
 * An **Azure Key Vault** with:
     * RBAC for authorization.
-    * Public access disabled.
+    * Public access restricted to one IP.
     * A private endpoint for secure access from the VNet.
 * An **RSA Key** within the Key Vault for the storage account's encryption.
 * **Role Assignments** to grant necessary permissions:
