@@ -1,3 +1,4 @@
+# BAckend stored within https://app.terraform.io/ aka terraform cloud
 terraform { 
   cloud { 
     
@@ -20,3 +21,4 @@ provider "azurerm" {
     
     
 }
+
