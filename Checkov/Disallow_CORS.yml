@@ -1,0 +1,14 @@
+metadata:
+  id: CUSTOM_AZURE_STG_CORS_NO_WILDCARD
+  name: Storage CORS rules must not allow wildcard origins
+  category: NETWORKING
+  severity: LOW
+scope:
+  provider: azure
+definition:
+  and:
+    - cond_type: attribute
+      resource_types: [azurerm_storage_account]
+      attribute: blob_properties.*.cors_rule.*.allowed_origins
+      operator: not_contains
+      value: "*"

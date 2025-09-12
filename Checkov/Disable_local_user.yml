@@ -1,0 +1,14 @@
+metadata:
+  id: CUSTOM_AZURE_STG_LOCAL_USERS_DISABLED
+  name: Storage local users must be disabled
+  category: DATA_PROTECTION
+  severity: MEDIUM
+scope:
+  provider: azure
+definition:
+  and:
+    - cond_type: attribute
+      resource_types: [azurerm_storage_account]
+      attribute: local_user_enabled
+      operator: equals
+      value: false

@@ -1,0 +1,14 @@
+metadata:
+  id: CUSTOM_AZURE_STG_NO_WIDE_IP_RULES
+  name: Storage ip_rules must not allow 0.0.0.0/0
+  category: NETWORKING
+  severity: HIGH
+scope:
+  provider: azure
+definition:
+  and:
+    - cond_type: attribute
+      resource_types: [azurerm_storage_account]
+      attribute: network_rules.*.ip_rules
+      operator: not_contains
+      value: 0.0.0.0/0

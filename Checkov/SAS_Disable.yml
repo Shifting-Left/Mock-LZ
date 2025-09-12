@@ -1,0 +1,15 @@
+metadata:
+  id: CUSTOM_AZURE_STG_SHARED_KEYS_DISABLED
+  name: Storage Account shared access keys must be disabled
+  category: IAM
+  severity: HIGH
+scope:
+  provider: azure
+definition:
+  and:
+    - cond_type: attribute
+      resource_types:
+        - azurerm_storage_account
+      attribute: shared_access_key_enabled
+      operator: equals
+      value: false

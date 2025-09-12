@@ -1,0 +1,15 @@
+metadata:
+  id: CUSTOM_AZURE_STG_HTTPS_ONLY
+  name: Storage Account must enforce HTTPS only
+  category: NETWORKING
+  severity: MEDIUM
+scope:
+  provider: azure
+definition:
+  and:
+    - cond_type: attribute
+      resource_types:
+        - azurerm_storage_account
+      attribute: https_traffic_only_enabled
+      operator: equals
+      value: true

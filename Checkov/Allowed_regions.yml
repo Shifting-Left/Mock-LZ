@@ -1,0 +1,30 @@
+metadata:
+  id: CUSTOM_AZURE_ALLOWED_REGIONS
+  name: Resources must be deployed only to approved regions
+  category: GOVERNANCE
+  severity: LOW
+scope:
+  provider: azure
+definition:
+  and:
+    - cond_type: attribute
+      resource_types:
+        - azurerm_resource_group
+        - azurerm_storage_account
+        - azurerm_key_vault
+        - azurerm_virtual_network
+        - azurerm_subnet
+      attribute: location
+      operator: within
+      value:
+        - eastus
+        - eastus2
+        - centralus
+        - westus
+        - westus2
+        - northcentralus
+        - southcentralus
+        - westcentralus
+        - canadacentral
+        - canadaeast
+

@@ -1,0 +1,15 @@
+metadata:
+  id: CUSTOM_AZURE_STG_MIN_TLS12
+  name: Storage Account min TLS version must be TLS1_2
+  category: ENCRYPTION
+  severity: MEDIUM
+scope:
+  provider: azure
+definition:
+  and:
+    - cond_type: attribute
+      resource_types:
+        - azurerm_storage_account
+      attribute: min_tls_version
+      operator: equals
+      value: TLS1_2
