@@ -1,6 +1,5 @@
 name: Deploy Terraform (apply)
 
-
 on:
   workflow_dispatch:
 
@@ -13,11 +12,12 @@ jobs:
       security-events: write
 
     env:
-      TF_TOKEN_app_terraform_io: ${{ secrets.TF_TOKEN_API1 }}
+      TF_TOKEN_app_terraform_io: ${{ secrets.TF_TOKEN_API1 }} # Terraform Cloud API token stored in GitHub Secrets
 
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
+
       # Install Python & Checkov so we can load your custom policies from ./Checkov
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -28,45 +28,47 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install checkov
+      # Set up Terraform CLI
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
 
-      # Run Checkov BEFORE any terraform apply. This will fail the job on findings.
-
-      - name: Run Checkov (with custom policies in ./Checkov)
+      # Create Terraform plan JSON (in Landing-Zone)
+      - name: Terraform Plan to JSON
+        working-directory: Landing-Zone
         shell: bash
         run: |
-          # Scan only Terraform code, download modules, emit CLI + SARIF
+          terraform init
+          terraform plan -out tf.plan
+          terraform show -json tf.plan > tf.json
+
+      # Run Checkov on the plan JSON (custom policies, skip built-ins)
+      # This step FAILS the job on findings (no --soft-fail).
+      - name: Run Checkov on plan (custom policies, SARIF)
+        shell: bash
+        run: |
           checkov \
-            -d Landing-Zone \
-            --framework terraform \
-            --download-external-modules true \
+            -f Landing-Zone/tf.json \
             --external-checks-dir Checkov \
             --skip-check 'CKV*' \
-            --soft-fail \
             -o cli -o sarif \
             --output-file-path console,./checkov.sarif
 
-        # If Checkov fails, we'll still upload SARIF (next step), but we won't proceed to apply.
-
+      # Always upload SARIF, even if Checkov failed
       - name: Upload SARIF to GitHub Code Scanning
         if: success() || failure()
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: ./checkov.sarif
 
-      # Continue with Terraform only if Checkov passed
+      # Continue with Terraform only if all previous steps (incl. Checkov) succeeded
       - name: Set up Node.js
+        if: success()
         uses: actions/setup-node@v4
         with:
           node-version: '18'
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v2
-
-      - name: Terraform Init
-        working-directory: Landing-Zone
-        run: terraform init
-
       - name: Terraform Apply
+        if: success()
         working-directory: Landing-Zone
         run: terraform apply -auto-approve
 
@@ -74,11 +76,8 @@ jobs:
         if: always()
         shell: bash
         run: |
-          # Overwrite for subsequent steps in this job
           echo "TF_TOKEN_app_terraform_io=" >> "$GITHUB_ENV"
           unset TF_TOKEN_app_terraform_io || true
-          # Remove any TF CLI creds file if a previous action created one
           rm -f "$HOME/.terraformrc" "$HOME/.terraform.d/credentials.tfrc.json" || true
-          # Clean local TF artifacts from workspace
           rm -rf "${GITHUB_WORKSPACE}/Landing-Zone/.terraform" \
                  "${GITHUB_WORKSPACE}/Landing-Zone/.terraform.lock.hcl" || true
