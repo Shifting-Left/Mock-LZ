@@ -1,0 +1,20 @@
+metadata:
+  id: CUSTOM_AZURE_ALLOWED_RESOURCES
+  name: Only allow specific Azure resource types
+  category: GOVERNANCE
+  severity: HIGH
+scope:
+  provider: azure
+definition:
+  not:
+    cond_type: attribute
+    resource_types:
+      # List of allowed resource types
+      - azurerm_resource_group
+      - azurerm_storage_account
+      - azurerm_key_vault
+      - azurerm_virtual_network
+      - azurerm_subnet
+      - azurerm_private_endpoint
+    attribute: resource_type
+    operator: exists
