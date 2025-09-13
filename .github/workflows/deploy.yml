@@ -41,7 +41,7 @@ jobs:
             --download-external-modules true \
             --external-checks-dir Checkov \
             --skip-check 'CKV*' \
-            --soft-fail true \
+            --soft-fail \
             -o cli -o sarif \
             --output-file-path console,./checkov.sarif
 
