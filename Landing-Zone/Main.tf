@@ -62,6 +62,7 @@ resource "azurerm_storage_account" "strg" {
   allow_nested_items_to_be_public = false
   shared_access_key_enabled = false
   sftp_enabled = false
+  local_user_enabled = false
   network_rules {
     default_action             = "Deny"
     ip_rules                   = [var.Home_PIP]
