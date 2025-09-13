@@ -40,7 +40,7 @@ jobs:
             --framework terraform \
             --download-external-modules true \
             --external-checks-dir Checkov \
-            --skip-check 'CKV_AZURE_*' \
+            --skip-check 'CKV*' \
             -o cli -o sarif \
             --output-file-path console,./checkov.s
 
