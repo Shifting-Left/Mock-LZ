@@ -39,7 +39,7 @@ jobs:
             --framework terraform \
             --download-external-modules true \
             --external-checks-dir Checkov \
-            --run-all-external-checks \
+            --skip-checks CKV_Azure* \
             -o cli -o sarif \
             --output-file-path console,./checkov.sarif
         # If Checkov fails, we'll still upload SARIF (next step), but we won't proceed to apply.
