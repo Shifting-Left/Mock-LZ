@@ -35,3 +35,7 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+checkov.sarif
+Landing-Zone/.terraform.lock.hcl
+Landing-Zone/tf.json
+Landing-Zone/tf.plan
