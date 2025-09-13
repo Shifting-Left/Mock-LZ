@@ -13,6 +13,7 @@ resource "azurerm_role_assignment" "storage_keyvault_role" {
   scope                = azurerm_key_vault.keyvault.id
   role_definition_name = "Key Vault Crypto Officer"
   principal_id         = azurerm_storage_account.strg.identity[0].principal_id
+
 }
 
 # Assign Key Vault Administrator role to the Terraform principal for unrestricted access to AKV
@@ -27,6 +28,7 @@ resource "azurerm_role_assignment" "specific_user_blob_reader" {
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = var.user1_object_id
   principal_type       = "User"
+  
 }
 
 resource "azurerm_resource_group" "rg" {
@@ -102,6 +104,7 @@ resource "azurerm_key_vault_key" "key" {
     key_type     = "RSA"
     key_size     = 2048
     key_opts     = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
+    
 }
 
 resource "azurerm_storage_account_customer_managed_key" "example" {

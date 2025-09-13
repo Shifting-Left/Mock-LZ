@@ -13,7 +13,7 @@ definition:
         - azurerm_storage_account
         - azurerm_key_vault
         - azurerm_virtual_network
-        - azurerm_subnet
+        #- azurerm_subnet - subnets inherit the region of their vnet
       attribute: location
       operator: within
       value:
