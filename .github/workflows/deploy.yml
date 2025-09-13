@@ -30,18 +30,20 @@ jobs:
           pip install checkov
 
       # Run Checkov BEFORE any terraform apply. This will fail the job on findings.
+
       - name: Run Checkov (with custom policies in ./Checkov)
         shell: bash
         run: |
-          # Scan only Terraform code, download modules if referenced, emit CLI + SARIF
+          # Scan only Terraform code, download modules, emit CLI + SARIF
           checkov \
             -d Landing-Zone \
             --framework terraform \
             --download-external-modules true \
             --external-checks-dir Checkov \
-            --skip-checks CKV_Azure* \
+            --skip-check 'CKV_AZURE_*' \
             -o cli -o sarif \
-            --output-file-path console,./checkov.sarif
+            --output-file-path console,./checkov.s
+
         # If Checkov fails, we'll still upload SARIF (next step), but we won't proceed to apply.
 
       - name: Upload SARIF to GitHub Code Scanning
