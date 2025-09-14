@@ -6,7 +6,6 @@ resource "random_string" "suffix" {
   lower   = false
   numeric = true
   special = false
-
 }
 
 # Assign Key Vault Crypto Officer role to the Storage Account's managed identity
