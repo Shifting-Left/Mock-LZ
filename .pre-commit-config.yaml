@@ -1,0 +1,70 @@
+repos:
+  # --- Local hooks: your custom logic ---
+  - repo: local
+    hooks:
+      # Block newly-staged files that are matched by .gitignore
+      - id: block-ignored-files
+        name: Block files matched by .gitignore (on add)
+        entry: bash scripts/block-ignored-files.sh
+        language: system
+        pass_filenames: false
+
+      # (A) Gitleaks: scan STAGED changes for secrets
+      - id: gitleaks-staged
+        name: Gitleaks (staged)
+        entry: gitleaks protect --staged --redact
+        language: system
+        pass_filenames: false
+
+      # (B) detect-secrets (optional): staged scan against a baseline
+      # First create the baseline (see notes below), then enable this hook:
+      - id: detect-secrets-staged
+        name: detect-secrets (staged, baseline)
+        entry: detect-secrets-hook --baseline .secrets.baseline
+        language: system
+        pass_filenames: false
+
+  # --- Terraform format & validate ---
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.88.0  # pin to a stable release
+    hooks:
+      # Formats all *.tf / *.tfvars (writes fixes to your working tree)
+      - id: terraform_fmt
+
+      # Runs 'terraform init -backend=false' + 'terraform validate' per module
+      - id: terraform_validate
+        args:
+          # Avoid contacting remote backends in CI/local dev
+          - --hook-config=--tf-init-args=-backend=false
+
+  # --- YAML formatting (and other common formats) ---
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.3.3
+    hooks:
+      - id: prettier
+        name: Prettier (YAML/JSON/Markdown)
+        # Prettier will format these; extend if you like (e.g., .mdx, .yml.j2)
+        files: "\\.(ya?ml|json|md)$"
+        args:
+          - --ignore-unknown
+          - --loglevel=warn
+
+  # --- YAML lint (style and structural checks) ---
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+        # Let Prettier format first, then lint with yamllint
+        files: "\\.(ya?ml)$"
+        # Optional: use a repo-level .yamllint.yaml for project-specific rules
+        # args: ["-c", ".yamllint.yaml"]
+
+  # --- Helpful general hygiene checks ---
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-merge-conflict
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-added-large-files
+      - id: check-yaml  # basic YAML sanity checks

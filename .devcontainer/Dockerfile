@@ -7,9 +7,10 @@ USER root
 
 # Install prerequisites for adding new repositories and tools
 RUN apt-get update && apt-get install -y \
-    gnupg software-properties-common wget ca-certificates curl apt-transport-https lsb-release python3-pip \
+    gnupg software-properties-common wget ca-certificates curl apt-transport-https lsb-release \
+    python3-pip python3-venv pipx \
     jq \
- && rm -rf /var/lib/apt/lists/*
+  && rm -rf /var/lib/apt/lists/*
 
 # Add the HashiCorp GPG key and repository for Terraform
 RUN wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg && \
@@ -22,14 +23,14 @@ RUN curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -
 # Update package list and install Terraform and Azure CLI
 RUN apt-get update && apt-get install -y terraform azure-cli && rm -rf /var/lib/apt/lists/*
 
-# Install gitleaks
+# --- Install gitleaks (pinned) ---
 ENV GITLEAKS_VERSION="8.18.2"
 RUN wget -O /tmp/gitleaks.tar.gz "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
  && tar -xzf /tmp/gitleaks.tar.gz -C /tmp \
  && mv /tmp/gitleaks /usr/local/bin/gitleaks \
  && rm /tmp/gitleaks.tar.gz
 
-# Install Open Policy Agent (OPA)
+# --- Install Open Policy Agent (OPA) ---
 RUN curl -L -o /usr/local/bin/opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64_static && \
     chmod +x /usr/local/bin/opa
 
@@ -47,6 +48,16 @@ RUN if [ "$INSTALL_HELM" = "true" ]; then \
       apt-get update && apt-get install -y helm && \
       rm -rf /var/lib/apt/lists/* ; \
     fi
+
+# --- pre-commit + detect-secrets (installed via pipx system-wide) ---
+# Use pipx so tools are isolated yet available to all users in /usr/local/bin
+ENV PIPX_HOME=/opt/pipx
+ENV PIPX_BIN_DIR=/usr/local/bin
+RUN pipx install pre-commit && \
+    pipx install detect-secrets && \
+    pre-commit --version && \
+    detect-secrets --version && \
+    gitleaks version || true
 
 # Switch back to the non-root 'vscode' user for security
 USER vscode
