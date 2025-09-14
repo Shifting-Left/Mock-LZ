@@ -1,0 +1,30 @@
+definition:
+  or:
+    # Allowed Azure resource types
+    - and:
+        - cond_type: filter
+          attribute: resource_type
+          operator: starting_with
+          value: azurerm_
+        - not:
+            cond_type: resource
+            operator: exists
+            resource_types:
+              - azurerm_resource_group
+              - azurerm_virtual_network
+              - azurerm_subnet
+              - azurerm_storage_account
+              - azurerm_storage_container
+              - azurerm_key_vault
+              - azurerm_key_vault_key
+              - azurerm_storage_account_customer_managed_key
+              - azurerm_private_endpoint
+              - azurerm_role_assignment
+
+    # Explicitly allow non-Azure helpers (uncomment any you need)
+    - cond_type: resource
+      operator: exists
+      resource_types:
+        - random_string
+        # - tls_private_key
+        # - time_sleep
